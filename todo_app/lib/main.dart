@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/homePage.dart';
+import 'package:todo_app/todayTask.dart';
 
 void main() {
   runApp(Myapp());
@@ -14,7 +14,7 @@ class Myapp extends StatelessWidget {
       title: 'Flutter app',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.purple),
-      home: Homepage(),
+      home: Alltask(),
     );
   }
 }

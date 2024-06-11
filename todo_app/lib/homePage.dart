@@ -69,7 +69,7 @@ class _HomepageState extends State<Homepage> {
         centerTitle: true,
         backgroundColor: Color.fromARGB(255, 108, 76, 212),
         title: Text("Hii Prince kuamr"),
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
+        // leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
       ),
       body: SafeArea(
           child: SingleChildScrollView(
@@ -94,55 +94,48 @@ class _HomepageState extends State<Homepage> {
               height: 20,
             ),
             Center(
-                child: TextFormField(
-              controller: datecontroller,
-              decoration: InputDecoration(
-                hintText: " Date",
+                child: Container(
+              width: screenWidth * 0.3,
+              child: TextFormField(
+                controller: datecontroller,
+                textAlign: TextAlign.center,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: " Date",
+                ),
               ),
             )),
             SizedBox(
               height: 20,
             ),
             Center(
-                child: TextFormField(
-              controller: titlecontroller,
-              decoration: InputDecoration(
-                hintText: " Title",
+                child: Container(
+              width: screenWidth * 0.6,
+              child: TextFormField(
+                controller: titlecontroller,
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  hintText: " Title",
+                ),
               ),
             )),
             SizedBox(
               height: 20,
             ),
             Center(
-                child: TextFormField(
-              controller: textcontroller,
-              decoration: InputDecoration(
-                hintText: "Description ",
+                child: Container(
+              width: screenWidth * 0.8,
+              child: TextFormField(
+                controller: textcontroller,
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  hintText: "Description ",
+                ),
               ),
             )),
             SizedBox(
               height: 20,
             ),
-            // ListView.builder(
-            //   shrinkWrap: true,
-            //   physics: NeverScrollableScrollPhysics(),
-            //   itemCount: todosList.length,
-            //   itemBuilder: (context, index) {
-            //     return ListTile(
-            //       title: Text(" hello" + todosList[index].title.toString()),
-            //       subtitle: Text(todosList[index].id.toString()),
-            //       trailing: IconButton(
-            //         icon: Icon(Icons.delete),
-            //         onPressed: () {
-            //           setState(() {
-            //             to.remove(index);
-            //           });
-            //           saveIntoSp();
-            //         },
-            //       ),
-            //     );
-            //   },
-            // ),
             Center(
                 child: InkWell(
               onTap: () {
@@ -150,7 +143,9 @@ class _HomepageState extends State<Homepage> {
                 String title = titlecontroller.text.trim();
                 String text = textcontroller.text.trim();
 
-                if (date.isNotEmpty && title.isNotEmpty && text.isNotEmpty) {
+                if (date.isNotEmpty & title.isNotEmpty &&
+                    text.isNotEmpty &&
+                    (0 < int.parse(date) && int.parse(date) <= 31)) {
                   setState(() {
                     datecontroller.text = '';
                     titlecontroller.text = '';
@@ -163,10 +158,11 @@ class _HomepageState extends State<Homepage> {
                         isDone: true));
                   });
                   saveIntoSp();
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Alltask()));
+                } else {
+                  print('Enter valid ceredential');
                 }
-
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => Todaytask()));
 
                 // print('   List   ' + todosList.length.toString());
               },

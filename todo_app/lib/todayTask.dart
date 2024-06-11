@@ -1,49 +1,61 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/Component/button.dart';
 import 'package:todo_app/homePage.dart';
 import 'package:todo_app/todo.dart';
 
-class Todaytask extends StatefulWidget {
-  Todaytask({
+class Alltask extends StatefulWidget {
+  Alltask({
     super.key,
   });
 
   @override
-  State<Todaytask> createState() => _TodaytaskState();
+  State<Alltask> createState() => _AlltaskState();
 }
 
-class _TodaytaskState extends State<Todaytask> {
-  List<ToDo> tod = List.empty(growable: true);
-  List<ToDo> task = [];
+class _AlltaskState extends State<Alltask> {
+  // List<ToDo> tod = List.empty(growable: true);
+  List<ToDo> tod = [];
 
   late SharedPreferences sp;
-  getSharedPrefrence() async {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+
+    super.initState();
+    getSharedPrefrence();
+  }
+
+  Future<void> getSharedPrefrence() async {
     sp = await SharedPreferences.getInstance();
 
     readFromSp();
   }
 
-  readFromSp() {
+  void readFromSp() {
     List<String>? taskListString = sp.getStringList('mytask');
 
     if (taskListString != null) {
-      tod = taskListString
-          .map((context) => ToDo.fromJson(json.decode(context)))
-          .toList();
+      setState(() {
+        tod = taskListString
+            .map((context) => ToDo.fromJson(json.decode(context)))
+            .toList();
+      });
     } else {
       print('               empty              ');
     }
-    setState(() {});
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    getSharedPrefrence();
-    super.initState();
+  Future<void> removeFromSp(int index) async {
+    setState(() {
+      tod.removeAt(index);
+    });
+    List<String> taskListString =
+        tod.map((item) => json.encode(item.toJson())).toList();
+    await sp.setStringList('mytask', taskListString);
   }
 
   @override
@@ -53,8 +65,10 @@ class _TodaytaskState extends State<Todaytask> {
     return Scaffold(
       backgroundColor: Color(0xFFEDEDED),
       appBar: AppBar(
-        title: Text('Hii Prince kumar'),
+        centerTitle: true,
         backgroundColor: Color.fromARGB(255, 108, 76, 212),
+        title: Text("Hii Prince kuamr"),
+        leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
       ),
       body: SafeArea(
           child: Column(
@@ -82,57 +96,86 @@ class _TodaytaskState extends State<Todaytask> {
           SizedBox(
             height: 20,
           ),
-          Center(
-            child: Container(
-              height: screenHeight * 0.99,
-              width: screenWidth * 0.94,
-              decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 198, 176, 226),
-                  borderRadius: BorderRadius.circular(20)),
-              child: ListView.builder(
-                  itemCount: tod.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: ListTile(
-                        leading: Icon(Icons.work),
-                        title: Text(tod[index].title.toString()),
-                        subtitle: Text(tod[index].description.toString()),
-                        trailing: IconButton(
-                            onPressed: () {
-                              setState(() {});
-                              //   saveIntoSp();
-                            },
-                            icon: Icon(Icons.delete)),
-                      ),
-                    );
-                  }),
-            ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 15.0, right: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: () {},
-                  child: Button(
-                    text: 'Add work',
-                    scree_width: screenWidth * 0.4,
-                  ),
+          Stack(
+            children: [
+              Center(
+                child: Container(
+                  height: screenHeight * 1.188,
+                  width: screenWidth * 0.94,
+                  decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 198, 176, 226),
+                      borderRadius: BorderRadius.circular(20)),
+                  child: ListView.builder(
+                      itemCount: tod.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          child: ListTile(
+                            leading: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  tod[index].date.toString(),
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                Text(
+                                  DateFormat('MMMM')
+                                      .format(DateTime.now())
+                                      .toString(),
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ],
+                            ),
+                            title: Text(
+                              tod[index].title.toString(),
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            subtitle: Text(
+                              tod[index].description.toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            trailing: IconButton(
+                                onPressed: () {
+                                  removeFromSp(index);
+                                },
+                                icon: Icon(Icons.delete)),
+                          ),
+                        );
+                      }),
                 ),
-                FloatingActionButton(
+              ),
+              Positioned(
+                bottom: 10,
+                right: 20,
+                child: FloatingActionButton(
                   onPressed: () {
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) => Homepage()));
                   },
                   child: Icon(Icons.add),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+          SizedBox(
+            height: 20,
+          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(left: 15.0, right: 12),
+          //   child: Row(
+          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //     children: [
+          //       InkWell(
+          //         onTap: () {},
+          //         child: Button(
+          //           text: 'Add work',
+          //           scree_width: screenWidth * 0.4,
+          //         ),
+          //       ),
+
+          //     ],
+          //   ),
+          // ),
         ],
       )),
     );
