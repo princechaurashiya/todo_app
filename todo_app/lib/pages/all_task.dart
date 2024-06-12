@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/homePage.dart';
-import 'package:todo_app/todo.dart';
+import 'package:todo_app/pages/homePage.dart';
+import 'package:todo_app/pages/todo.dart';
 
 class Alltask extends StatefulWidget {
   Alltask({
@@ -17,9 +17,10 @@ class Alltask extends StatefulWidget {
 
 class _AlltaskState extends State<Alltask> {
   // List<ToDo> tod = List.empty(growable: true);
+  late SharedPreferences sp;
   List<ToDo> tod = [];
 
-  late SharedPreferences sp;
+  String name = '';
 
   @override
   void initState() {
@@ -27,6 +28,7 @@ class _AlltaskState extends State<Alltask> {
 
     super.initState();
     getSharedPrefrence();
+    loadName();
   }
 
   Future<void> getSharedPrefrence() async {
@@ -35,9 +37,9 @@ class _AlltaskState extends State<Alltask> {
     readFromSp();
   }
 
+// For retrive data from SharedPreference
   void readFromSp() {
     List<String>? taskListString = sp.getStringList('mytask');
-
     if (taskListString != null) {
       setState(() {
         tod = taskListString
@@ -49,6 +51,7 @@ class _AlltaskState extends State<Alltask> {
     }
   }
 
+// For deleting task and after that save remaining data in  shared preference
   Future<void> removeFromSp(int index) async {
     setState(() {
       tod.removeAt(index);
@@ -56,6 +59,14 @@ class _AlltaskState extends State<Alltask> {
     List<String> taskListString =
         tod.map((item) => json.encode(item.toJson())).toList();
     await sp.setStringList('mytask', taskListString);
+  }
+
+  //For retriving normal sign up page data
+  void loadName() async {
+    sp = await SharedPreferences.getInstance();
+    setState(() {
+      name = sp.getString('name') ?? "No name found"; // Retrieving name
+    });
   }
 
   @override
@@ -67,8 +78,8 @@ class _AlltaskState extends State<Alltask> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Color.fromARGB(255, 108, 76, 212),
-        title: Text("Hii Prince kuamr"),
-        leading: IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
+        title: Text('Hii ' + name.toString()),
+        leading: IconButton(onPressed: () {}, icon: Icon(Icons.person)),
       ),
       body: SafeArea(
           child: Column(
@@ -80,12 +91,12 @@ class _AlltaskState extends State<Alltask> {
           ),
           Center(
             child: Container(
-              height: 200,
+              height: 180,
               width: 200,
               child: Image.asset('assets/images/girlwith_walking.png'),
             ),
           ),
-          Padding(
+          const Padding(
             padding: const EdgeInsets.only(left: 15.0),
             child: Text(
               'All task',

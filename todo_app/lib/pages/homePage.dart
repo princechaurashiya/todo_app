@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/Component/button.dart';
-import 'package:todo_app/todayTask.dart';
-import 'package:todo_app/todo.dart';
+import 'package:todo_app/pages/all_task.dart';
+import 'package:todo_app/pages/todo.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
