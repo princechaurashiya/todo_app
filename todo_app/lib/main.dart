@@ -20,7 +20,7 @@ class _MyappState extends State<Myapp> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    //  TODO:  implement initState
     super.initState();
     loadData();
   }
@@ -44,6 +44,7 @@ class _MyappState extends State<Myapp> {
   }
 }
 
+//
 // import 'package:flutter/material.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:todo_app/pages/all_task.dart';
@@ -57,7 +58,7 @@ class _MyappState extends State<Myapp> {
 //   const Myapp({super.key});
 
 //   @override
-//   State<Myapp> createState() => _MyappState();
+//   State<Myapp>  createState() => _MyappState();
 // }
 
 // class _MyappState extends State<Myapp> {
@@ -88,3 +89,4 @@ class _MyappState extends State<Myapp> {
 //     );
 //   }
 // }
+// this is for checking
