@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todo_app/pages/homePage.dart';
+import 'package:todo_app/pages/sign_in.dart';
 import 'package:todo_app/pages/todo.dart';
 
 class Alltask extends StatefulWidget {
@@ -21,6 +22,9 @@ class _AlltaskState extends State<Alltask> {
   List<ToDo> tod = [];
 
   String name = '';
+  String email = '';
+  String password = '';
+  bool isLogin = false;
 
   @override
   void initState() {
@@ -65,7 +69,13 @@ class _AlltaskState extends State<Alltask> {
   void loadName() async {
     sp = await SharedPreferences.getInstance();
     setState(() {
-      name = sp.getString('name') ?? "No name found"; // Retrieving name
+      name = sp.getString('name') ?? "No name found";
+      email = sp.getString('email') ?? "No name found";
+      password = sp.getString('password') ?? "No name found";
+      bool? loginStatus = sp.getBool('islogin');
+      setState(() {
+        isLogin = loginStatus ?? false;
+      });
     });
   }
 
@@ -80,114 +90,158 @@ class _AlltaskState extends State<Alltask> {
         backgroundColor: Color.fromARGB(255, 108, 76, 212),
         title: Text('Hii ' + name.toString()),
         leading: IconButton(onPressed: () {}, icon: Icon(Icons.person)),
+        actions: [
+          PopupMenuButton<String>(
+              onSelected: (String result) {
+                // Handle selection
+                print(result);
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                    PopupMenuItem<String>(
+                      value: '1',
+                      child: Text(name.toString()),
+                    ),
+                    PopupMenuItem<String>(
+                      value: '2',
+                      child: Text(email.toString()),
+                    ),
+                    PopupMenuItem<String>(
+                      value: '3',
+                      child: Text(password.toString()),
+                    ),
+                    PopupMenuItem<String>(
+                      value: '4',
+                      child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              isLogin = false;
+
+                              sp.setBool('islogin', isLogin);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => SignIn()));
+                            });
+                          },
+                          child: Text(
+                            'Log out',
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          )),
+                    )
+                  ])
+        ],
       ),
       body: SafeArea(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 15,
-          ),
-          Center(
-            child: Container(
-              height: 180,
-              width: 200,
-              child: Image.asset('assets/images/girlwith_walking.png'),
+          child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 15,
             ),
-          ),
-          const Padding(
-            padding: const EdgeInsets.only(left: 15.0),
-            child: Text(
-              'All task',
-              style: TextStyle(
-                  color: Color.fromARGB(255, 108, 76, 212), fontSize: 30),
+            Center(
+              child: Container(
+                height: 180,
+                width: 180,
+                child: Image.asset('assets/images/girlwith_walking.png'),
+              ),
             ),
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Stack(
-            children: [
-              Center(
-                child: Container(
-                  height: screenHeight * 1.188,
-                  width: screenWidth * 0.94,
-                  decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 198, 176, 226),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: ListView.builder(
-                      itemCount: tod.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          child: ListTile(
-                            leading: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  tod[index].date.toString(),
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                Text(
-                                  DateFormat('MMMM')
-                                      .format(DateTime.now())
-                                      .toString(),
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ],
-                            ),
-                            title: Text(
-                              tod[index].title.toString(),
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            subtitle: Text(
-                              tod[index].description.toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            trailing: IconButton(
-                                onPressed: () {
-                                  removeFromSp(index);
-                                },
-                                icon: Icon(Icons.delete)),
-                          ),
-                        );
-                      }),
-                ),
+            const Padding(
+              padding: const EdgeInsets.only(left: 15.0),
+              child: Text(
+                'All task',
+                style: TextStyle(
+                    color: Color.fromARGB(255, 108, 76, 212), fontSize: 30),
               ),
-              Positioned(
-                bottom: 10,
-                right: 20,
-                child: FloatingActionButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Homepage()));
-                  },
-                  child: Icon(Icons.add),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Stack(
+              children: [
+                Center(
+                  child: Container(
+                    height: screenHeight * 1.188,
+                    width: screenWidth * 0.94,
+                    decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 198, 176, 226),
+                        borderRadius: BorderRadius.circular(20)),
+                    child: ListView.builder(
+                        itemCount: tod.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            child: ListTile(
+                              leading: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    tod[index].date.toString(),
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  Text(
+                                    DateFormat('MMMM')
+                                        .format(DateTime.now())
+                                        .toString(),
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                ],
+                              ),
+                              title: Text(
+                                tod[index].title.toString(),
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              subtitle: Text(
+                                tod[index].description.toString(),
+                                style: TextStyle(fontSize: 16),
+                              ),
+                              trailing: IconButton(
+                                  onPressed: () {
+                                    removeFromSp(index);
+                                  },
+                                  icon: Icon(Icons.delete)),
+                            ),
+                          );
+                        }),
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          // Padding(
-          //   padding: const EdgeInsets.only(left: 15.0, right: 12),
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //     children: [
-          //       InkWell(
-          //         onTap: () {},
-          //         child: Button(
-          //           text: 'Add work',
-          //           scree_width: screenWidth * 0.4,
-          //         ),
-          //       ),
+                Positioned(
+                  bottom: 10,
+                  right: 20,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Homepage()));
+                    },
+                    child: Icon(Icons.add),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(left: 15.0, right: 12),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       InkWell(
+            //         onTap: () {},
+            //         child: Button(
+            //           text: 'Add work',
+            //           scree_width: screenWidth * 0.4,
+            //         ),
+            //       ),
 
-          //     ],
-          //   ),
-          // ),
-        ],
+            //     ],
+            //   ),
+            // ),
+          ],
+        ),
       )),
     );
   }

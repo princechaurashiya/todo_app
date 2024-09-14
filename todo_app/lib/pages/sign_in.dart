@@ -29,7 +29,7 @@ class _SignInState extends State<SignIn> {
     sp = await SharedPreferences.getInstance();
     setState(() {
       eml = sp.getString('email') ?? "No name found";
-      pass = sp.getString('pasword') ?? "No name found";
+      pass = sp.getString('password') ?? "No name found";
     });
   }
 
@@ -86,8 +86,10 @@ class _SignInState extends State<SignIn> {
           ),
           InkWell(
               onTap: () {
+                print(eml + '  ' + pass);
                 if (eml == signinEmalController.text.toString() &&
                     pass == signinPasswordController.text.toString()) {
+                  print(signinEmalController.text.toString());
                   Navigator.push(context,
                       MaterialPageRoute(builder: (context) => Alltask()));
                 }
